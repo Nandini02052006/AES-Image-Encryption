@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Login | AES Image Encryption</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #ffecd2, #fcb69f);
+      color: #333;
+    }
+
+    header {
+      background-color: #333;
+      color: white;
+      padding: 30px 20px;
+      font-size: 32px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .user-profile {
+      font-size: 16px;
+      font-weight: normal;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 60px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      font-size: 15px;
+    }
+
+    input {
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #fcb69f;
+      box-shadow: 0 0 10px rgba(252, 182, 159, 0.5);
+    }
+
+    button {
+      background-color: #333;
+      color: white;
+      padding: 14px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    .note {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 20px;
+    }
+
+    .success {
+      text-align: center;
+      color: green;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    🔐 User Login
+    <div class="user-profile" id="profileDisplay"></div>
+  </header>
+
+  <div class="container">
+    <h2>Login to Your Account</h2>
+    <form id="loginForm">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" placeholder="Enter your username" required>
+
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Enter your password" required>
+
+      <button type="submit">Login</button>
+    </form>
+    <p class="note">Don't have an account? <a href="register.html">Register here</a>.</p>
+    <div class="success" id="successMessage" style="display:none;">✅ Login successful!</div>
+  </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const profileDisplay = document.getElementById("profileDisplay");
+    const successMessage = document.getElementById("successMessage");
+
+    // Check if user already logged in
+    const currentUser = localStorage.getItem("aesUser");
+    if (currentUser) {
+      profileDisplay.textContent = `👤 Welcome, ${currentUser}`;
+      successMessage.style.display = "block";
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      if (username && password) {
+        localStorage.setItem("aesUser", username); // Store user
+        profileDisplay.textContent = `👤 Welcome, ${username}`;
+        successMessage.style.display = "block";
+        form.reset();
+      } else {
+        alert("Please enter valid credentials.");
+      }
+    });
+  </script>
+</body>
+</html>

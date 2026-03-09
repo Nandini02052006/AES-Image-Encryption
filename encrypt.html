@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AES Image Encryption & Decryption</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      color: #fff;
+      background: linear-gradient(270deg, #caf0f8, #90e0ef, #00b4d8, #0077b6, #023e8a);
+      background-size: 1400% 1400%;
+      animation: backgroundFlow 30s ease infinite;
+    }
+    @keyframes backgroundFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      flex-wrap: wrap;
+    }
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+      margin-right: 20px;
+    }
+    .nav-buttons button {
+      background: #00b4d8;
+      border: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .nav-buttons button:hover {
+      background: #0077b6;
+    }
+    .profile {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+    }
+    .logout-btn {
+      background: #f94144;
+      border: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    h1 {
+      font-size: 2.5rem; margin: 40px 0 10px;
+      text-align: center;
+      white-space: nowrap; overflow: hidden;
+      animation: scrollTitle 15s linear infinite;
+    }
+    @keyframes scrollTitle {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+    p.subheading {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #e0e0e0;
+      margin-bottom: 40px;
+    }
+    .form-section {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    form {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 400px;
+      width: 100%;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+    input[type="file"], input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+    }
+    button {
+      background-color: #4CAF50;
+      border: none;
+      color: white;
+      padding: 12px;
+      font-size: 1rem;
+      margin: 8px 0;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: background-color 0.3s;
+      width: 100%;
+    }
+    button:hover { background-color: #45a049; }
+    .flash, .notification {
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 15px;
+      margin: 30px auto;
+      max-width: 600px;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+      font-weight: bold;
+    }
+    .notification {
+      background: #333;
+      color: #fff;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      font-size: 0.9rem;
+    }
+    .admin-panel {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid #fff;
+      padding: 20px;
+      border-radius: 16px;
+      margin: 40px auto;
+      max-width: 800px;
+      color: #fff;
+      display: none;
+    }
+    .admin-panel h3 { color: #ffd60a; }
+    .usage-log {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-size: 0.9rem;
+    }
+    .preview-img {
+      max-width: 250px;
+      max-height: 250px;
+      display: block;
+      margin: 15px auto;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .cipher-container {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px auto;
+      max-width: 600px;
+      text-align: center;
+    }
+    .cipher-container textarea {
+      width: 100%;
+      height: 150px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      padding: 10px;
+      resize: none;
+      border: none;
+      outline: none;
+    }
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div style="font-weight:bold;">🔐 AES Image Encryption</div>
+  <div class="nav-buttons">
+    <button onclick="navigateTo('Home.html')">🏠 Home</button>
+    <button onclick="navigateTo('feedback.html')">✉️ Feedback</button>
+    <button onclick="navigateTo('Howitworks.html')">❓ How it Works</button>
+  </div>
+  <div class="profile">
+    <span id="userProfile">👤 Not logged in</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="notification" id="notifyBox"></div>
+<h1>AES Image Encryption & Decryption</h1>
+<p class="subheading">Secure your images using AES-128 encryption in just a few clicks.</p>
+<div id="flashMessage" class="flash"></div>
+
+<div class="form-section">
+  <form id="encryptForm" enctype="multipart/form-data">
+    <h2>Encrypt an Image</h2>
+    <input type="file" name="image" id="encryptImageInput" accept="image/*" required>
+    <input type="password" name="password" placeholder="Enter password" required>
+    <button type="submit">🔒 Encrypt</button>
+    <img id="previewEncrypt" class="preview-img" style="display:none;" />
+  </form>
+
+  <form id="decryptForm" enctype="multipart/form-data">
+    <h2>Decrypt an Image</h2>
+    <input type="file" name="image" accept=".enc" required>
+    <input type="password" name="password" placeholder="Enter password" required>
+    <button type="submit">🔓 Decrypt</button>
+  </form>
+</div>
+
+<div class="admin-panel" id="adminPanel">
+  <h3>📊 Admin Panel - Usage Statistics</h3>
+  <p>Total Encryptions: <span id="encryptCount">0</span></p>
+  <p>Total Decryptions: <span id="decryptCount">0</span></p>
+  <div class="usage-log" id="usageLog"></div>
+</div>
+
+<footer>
+  &copy; 2025 AES Image Locker | Built with HTML, JS & 💙
+</footer>
+
+<!-- Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+
+<script>
+// Navigation
+function navigateTo(page) {
+  window.location.href = page;
+}
+
+// Helper Elements
+const flashMessage = document.getElementById("flashMessage");
+const notifyBox = document.getElementById("notifyBox");
+const profileDisplay = document.getElementById("userProfile");
+let encryptCount = 0;
+let decryptCount = 0;
+let isAdmin = true;
+
+// Login Check
+const username = localStorage.getItem("aesUser");
+if (username) {
+  profileDisplay.textContent = `👤 Welcome, ${username}`;
+}
+
+// Flash & Notify
+function showFlash(msg) {
+  flashMessage.textContent = msg;
+  flashMessage.style.display = "block";
+  setTimeout(() => flashMessage.style.display = "none", 3000);
+}
+function showNotification(msg) {
+  notifyBox.textContent = msg;
+  notifyBox.style.display = "block";
+  setTimeout(() => notifyBox.style.display = "none", 2500);
+}
+
+// Encryption / Decryption Core
+function encryptImage(base64Data, password) {
+  const key = CryptoJS.PBKDF2(password, CryptoJS.enc.Hex.parse('abcdef1234567890'), { keySize: 128/32, iterations: 1000 });
+  const iv = CryptoJS.lib.WordArray.random(16);
+  const encrypted = CryptoJS.AES.encrypt(base64Data, key, { iv: iv });
+  return iv.concat(encrypted.ciphertext).toString(CryptoJS.enc.Base64);
+}
+function decryptImage(encryptedBase64, password) {
+  try {
+    const fullData = CryptoJS.enc.Base64.parse(encryptedBase64);
+    const iv = CryptoJS.lib.WordArray.create(fullData.words.slice(0, 4), 16);
+    const ciphertext = CryptoJS.lib.WordArray.create(fullData.words.slice(4), fullData.sigBytes - 16);
+    const key = CryptoJS.PBKDF2(password, CryptoJS.enc.Hex.parse('abcdef1234567890'), { keySize: 128/32, iterations: 1000 });
+    const decrypted = CryptoJS.AES.decrypt({ ciphertext: ciphertext }, key, { iv: iv });
+    return `data:image/png;base64,${decrypted.toString(CryptoJS.enc.Utf8)}`;
+  } catch {
+    return null;
+  }
+}
+
+// Show Cipher
+function showCipherText(cipherText) {
+  const container = document.createElement("div");
+  container.className = "cipher-container";
+
+  const title = document.createElement("h3");
+  title.textContent = "Encrypted Data";
+  container.appendChild(title);
+
+  const textarea = document.createElement("textarea");
+  textarea.value = cipherText;
+  textarea.readOnly = true;
+  container.appendChild(textarea);
+
+  const copyBtn = document.createElement("button");
+  copyBtn.textContent = "📋 Copy to Clipboard";
+  copyBtn.onclick = () => copyToClipboard(cipherText);
+  container.appendChild(copyBtn);
+
+  const downloadBtn = document.createElement("button");
+  downloadBtn.textContent = "💾 Download .enc File";
+  downloadBtn.onclick = () => {
+    const blob = new Blob([cipherText], { type: "text/plain" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "encrypted_image.enc";
+    link.click();
+  };
+  container.appendChild(downloadBtn);
+
+  const qrCanvas = document.createElement("canvas");
+  QRCode.toCanvas(qrCanvas, cipherText);
+  qrCanvas.style.margin = "10px auto";
+  container.appendChild(qrCanvas);
+
+  document.body.appendChild(container);
+}
+
+// Copy
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showNotification("✅ Copied to clipboard!");
+  }).catch(() => {
+    showNotification("❌ Failed to copy.");
+  });
+}
+
+// Admin Stats
+function updateAdminStats(action) {
+  const log = document.getElementById("usageLog");
+  const now = new Date().toLocaleString();
+  const entry = document.createElement("div");
+  entry.textContent = `[${now}] ${action}`;
+  log.prepend(entry);
+  if (action.includes("Encrypt")) {
+    encryptCount++;
+    document.getElementById("encryptCount").textContent = encryptCount;
+  } else if (action.includes("Decrypt")) {
+    decryptCount++;
+    document.getElementById("decryptCount").textContent = decryptCount;
+  }
+}
+if (isAdmin) {
+  document.getElementById("adminPanel").style.display = "block";
+}
+
+// Image Preview
+document.getElementById("encryptImageInput").addEventListener("change", function () {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById("previewEncrypt").src = e.target.result;
+      document.getElementById("previewEncrypt").style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+// Encrypt Submit
+document.getElementById("encryptForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  updateAdminStats("Encrypt operation triggered");
+  const formData = new FormData(this);
+  const password = formData.get('password');
+  const file = formData.get('image');
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const imageData = CryptoJS.enc.Base64.stringify(CryptoJS.lib.WordArray.create(event.target.result));
+    const encryptedImage = encryptImage(imageData, password);
+    showFlash('Encryption successful!');
+    showNotification("🔐 Image encrypted!");
+    showCipherText(encryptedImage);
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+// Decrypt Submit
+document.getElementById("decryptForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+  updateAdminStats("Decrypt operation triggered");
+  const formData = new FormData(this);
+  const password = formData.get('password');
+  const file = formData.get('image');
+
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const encryptedData = new TextDecoder().decode(event.target.result);
+    const decryptedDataUrl = decryptImage(encryptedData, password);
+    if (decryptedDataUrl) {
+      showFlash('Decryption successful!');
+      showNotification("🔓 Image decrypted!");
+      displayDecryptedImage(decryptedDataUrl);
+    } else {
+      showFlash('Decryption failed! Wrong password.');
+      showNotification("❌ Decryption failed!");
+    }
+  };
+  reader.readAsArrayBuffer(file);
+});
+
+// Display Decrypted
+function displayDecryptedImage(dataUrl) {
+  const img = document.createElement("img");
+  img.src = dataUrl;
+  img.className = "preview-img";
+  document.body.appendChild(img);
+
+  const link = document.createElement("a");
+  link.href = dataUrl;
+  link.download = "decrypted_image.png";
+  link.textContent = "⬇️ Download Decrypted Image";
+  link.style.display = "block";
+  link.style.textAlign = "center";
+  document.body.appendChild(link);
+}
+
+// Logout
+function logout() {
+  localStorage.removeItem("aesUser");
+  showNotification("🚪 You have been logged out.");
+  setTimeout(() => window.location.href = "home.html", 1500);
+}
+</script>
+</body>
+</html>

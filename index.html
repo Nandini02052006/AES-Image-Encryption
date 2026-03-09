@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AES Image Encryption & Decryption</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 40px 20px;
+      color: #fff;
+      background: linear-gradient(270deg, #caf0f8, #90e0ef, #00b4d8, #0077b6, #023e8a);
+      background-size: 1400% 1400%;
+      animation: backgroundFlow 30s ease infinite;
+    }
+
+    @keyframes backgroundFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .profile {
+      font-size: 1rem;
+    }
+
+    .logout-btn {
+      background: #f94144;
+      border: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-left: 15px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 40px 0 10px;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      animation: scrollTitle 15s linear infinite;
+    }
+
+    @keyframes scrollTitle {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    p.subheading {
+      text-align: center;
+      font-size: 1.1rem;
+      color: #e0e0e0;
+      margin-bottom: 40px;
+    }
+
+    .form-section {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    form {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 400px;
+      width: 100%;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    form h2 {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #ffe066;
+    }
+
+    input[type="file"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 10px;
+      background-color: #0077b6;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #023e8a;
+    }
+
+    .flash {
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 15px;
+      margin: 30px auto;
+      max-width: 600px;
+      border-radius: 8px;
+      text-align: center;
+      display: none;
+      font-weight: bold;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      color: #eee;
+    }
+
+    @media (max-width: 768px) {
+      .form-section {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>🔐 AES Image Encryption</div>
+    <div class="profile">
+      <span id="userProfile">👤 Not logged in</span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </header>
+
+  <h1>AES Image Encryption & Decryption</h1>
+  <p class="subheading">Secure your images using AES-128 encryption in just a few clicks.</p>
+
+  <div id="flashMessage" class="flash"></div>
+
+  <div class="form-section">
+    <!-- Encrypt Form -->
+    <form id="encryptForm" action="/encrypt" method="POST" enctype="multipart/form-data">
+      <h2>Encrypt an Image</h2>
+      <input type="file" name="image" accept="image/*" required>
+      <input type="password" name="password" placeholder="Enter password" required>
+      <button type="submit">🔒 Encrypt</button>
+    </form>
+
+    <!-- Decrypt Form -->
+    <form id="decryptForm" action="/decrypt" method="POST" enctype="multipart/form-data">
+      <h2>Decrypt an Image</h2>
+      <input type="file" name="image" accept=".enc" required>
+      <input type="password" name="password" placeholder="Enter password" required>
+      <button type="submit">🔓 Decrypt</button>
+    </form>
+  </div>
+
+  <footer>
+    &copy; 2025 AES Image Locker | Built with HTML, JS & 💙
+  </footer>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+
+  <script>
+    // Simulate login profile
+    const user = localStorage.getItem("aesUser") || "Guest";
+    document.getElementById("userProfile").textContent = `👤 Welcome, ${user}`;
+
+    function logout() {
+      localStorage.removeItem("aesUser");
+      window.location.href = "index.html"; // update to your login page
+    }
+
+    // Optional flash message after form submission (for frontend-only feedback)
+    const flashMessage = document.getElementById("flashMessage");
+
+    function showFlash(msg) {
+      flashMessage.textContent = msg;
+      flashMessage.style.display = "block";
+      setTimeout(() => {
+        flashMessage.style.display = "none";
+      }, 3000);
+    }
+
+    // Optional (if backend returns success, you can display something via JS)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success')) {
+      showFlash(urlParams.get('success'));
+    }
+  </script>
+</body>
+</html>

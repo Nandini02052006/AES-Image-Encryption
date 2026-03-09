@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home | AES Image Encryption</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    header {
+      background-color: rgba(0, 0, 0, 0.85);
+      padding: 25px 0;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    header h1 {
+      font-size: 40px;
+      color: #00e0ff;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+
+    .marquee {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #f1c40f;
+      overflow: hidden;
+      white-space: nowrap;
+      animation: scroll-left 12s linear infinite;
+    }
+
+    @keyframes scroll-left {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    nav {
+      background-color: rgba(0, 0, 0, 0.7);
+      text-align: center;
+      padding: 12px 0;
+      position: sticky;
+      top: 90px;
+      z-index: 999;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 20px;
+      font-size: 16px;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #1abc9c;
+    }
+
+    .hero {
+      background-image: url('https://images.unsplash.com/photo-1556157382-97eda2d62296?ixlib=rb-4.0.3&auto=format&fit=crop&w=1650&q=80');
+      background-size: cover;
+      background-position: center;
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    .hero h2 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: #00e0ff;
+      text-shadow: 2px 2px 10px #000;
+    }
+
+    .hero p {
+      font-size: 22px;
+      max-width: 700px;
+      margin: 0 auto;
+      text-shadow: 1px 1px 5px #000;
+    }
+
+    .hero button {
+      margin-top: 30px;
+      padding: 12px 25px;
+      font-size: 18px;
+      background-color: #1abc9c;
+      border: none;
+      border-radius: 25px;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .hero button:hover {
+      background-color: #16a085;
+    }
+
+    section {
+      max-width: 1100px;
+      margin: 80px auto;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    section h2 {
+      font-size: 32px;
+      color: #00e0ff;
+      margin-bottom: 20px;
+    }
+
+    section p {
+      font-size: 18px;
+      line-height: 1.8;
+      margin-bottom: 40px;
+    }
+
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+    }
+
+    .feature-card {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 15px;
+      width: 280px;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+      text-align: center;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .feature-card img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 15px;
+    }
+
+    .feature-card h3 {
+      color: #f1c40f;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      font-size: 16px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #ccc;
+      font-size: 14px;
+      margin-top: 60px;
+    }
+
+    /* Floating decorative shapes */
+    .floating-shape {
+      position: absolute;
+      border-radius: 50%;
+      background-color: rgba(0, 224, 255, 0.2);
+      animation: float 6s ease-in-out infinite alternate;
+    }
+
+    .shape1 { width: 80px; height: 80px; top: 150px; left: 10%; }
+    .shape2 { width: 50px; height: 50px; top: 400px; left: 85%; }
+    .shape3 { width: 100px; height: 100px; top: 800px; left: 40%; }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(20px); }
+    }
+
+    /* Modal popup style */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      padding-top: 200px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.7);
+    }
+
+    .modal-content {
+      background-color: #2c3e50;
+      margin: auto;
+      padding: 30px;
+      border: 1px solid #888;
+      width: 400px;
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .modal-content h2 {
+      color: #00e0ff;
+      margin-bottom: 20px;
+    }
+
+    .modal-content button {
+      padding: 10px 20px;
+      background-color: #1abc9c;
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .modal-content button:hover {
+      background-color: #16a085;
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🔐 AES Image Encryption</h1>
+    <div class="marquee">Welcome to Secure Image Encryption Portal | Encrypt and Protect Your Images Easily with AES Technology</div>
+  </header>
+
+  <nav>
+    <a href="#home">Home</a>
+    <a href="about3.html">About</a>
+    <a href="how4.html">How It Works</a>
+    <a href="login.html">Login</a>
+    <a href="registration.html">Signup</a>
+    <a href="nandhu3.html">Encrypt/Decrypt</a>
+    <a href="feedback.html">Feedback</a>
+  </nav>
+
+  <div class="hero" id="home">
+    <h2>Secure Your Images Instantly</h2>
+    <p>Fast, easy, and powerful image encryption and decryption using the trusted AES technology. Protect your privacy today!</p>
+    <button onclick="openModal()">Get Started</button>
+  </div>
+
+  <section>
+    <h2>Features</h2>
+    <p>
+      With cutting-edge security and a user-friendly interface, we offer you the best protection for your image files.
+    </p>
+
+    <div class="features">
+      <div class="feature-card">
+        <img src="https://img.icons8.com/fluency/96/lock.png" alt="AES Lock">
+        <h3>🔐 AES Algorithm</h3>
+        <p>Robust and industry-standard encryption with 128/192/256-bit key support.</p>
+      </div>
+
+      <div class="feature-card">
+        <img src="https://img.icons8.com/fluency/96/image.png" alt="Image Support">
+        <h3>🖼️ Image Friendly</h3>
+        <p>Supports JPEG, PNG, BMP and other image formats with instant preview.</p>
+      </div>
+
+      <div class="feature-card">
+        <img src="https://img.icons8.com/fluency/96/easy.png" alt="Easy to Use">
+        <h3>⚡ Easy to Use</h3>
+        <p>Simple upload, encrypt, decrypt and download without needing coding skills.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 AES Image Encryption Project | All rights reserved.
+  </footer>
+
+  <!-- Floating shapes -->
+  <div class="floating-shape shape1"></div>
+  <div class="floating-shape shape2"></div>
+  <div class="floating-shape shape3"></div>
+
+  <!-- Modal Popup -->
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <h2>Please register to continue</h2>
+      <button onclick="redirectToRegister()">Continue</button>
+    </div>
+  </div>
+
+  <script>
+    function openModal() {
+      document.getElementById("myModal").style.display = "block";
+    }
+
+    function redirectToRegister() {
+      window.location.href = "registration.html";
+    }
+  </script>
+
+</body>
+</html>
